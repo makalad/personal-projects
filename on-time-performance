@@ -1,0 +1,184 @@
+##gets input for expected and actual departure time
+def get_inputs():
+    flights = []
+    expected_time = (input('Enter expected departure time (or "done" to continue): ') + "\n").strip()
+    if expected_time == 'done':
+        print('\n No information entered.')
+    else:
+        while expected_time != 'done':
+            actual_time = int(input('Enter actual departure time: ') + "\n")
+            expected_time = int(expected_time)
+            actual_time = (int(actual_time / 100 ))* 60 + (actual_time % 100)
+            expected_time = (int(expected_time / 100)) * 60 + (expected_time % 100)
+            time_difference = actual_time - expected_time
+            flights.append(time_difference)
+            expected_time = (input('Enter expected departure time (or "done" to continue): ') + "\n").strip()
+    return flights
+
+#flights left before time
+def left_early(flights):
+    early = 0
+    for i in range(len(flights)):
+        if flights[i] < 0:
+            early += 1
+    return early
+
+#percent of flights that left before time
+def percent_early(flights):
+    per_early = 0
+    if len(flights) != 0:
+        per_early = round((left_early(flights)/ len(flights)) * 100)
+    return per_early
+
+#flights left within 15 minutes after time
+def left_on_time(flights):
+    on_time = 0
+    for i in range(len(flights)):
+        if flights[i] <= 15:
+            on_time += 1
+    return on_time
+
+#percent of flights that left within 15 minutes after time
+def percent_on_time(flights):
+    per_on_time = 0
+    if len(flights) != 0:
+        per_on_time = round((left_on_time(flights) / len(flights)) * 100)
+    return per_on_time
+
+def left_on_time_not_early(flights):
+    on_time = 0
+    for i in range(len(flights)):
+        if 0 <= flights[i] <= 15:
+            on_time += 1
+    return on_time
+
+#percent of flights that left within 15 minutes after time
+def percent_on_time_not_early(flights):
+    per_on_time = 0
+    if len(flights) != 0:
+        per_on_time = round((left_on_time_not_early(flights) / len(flights)) * 100)
+    return per_on_time
+
+#flights that left within 30 minutes after time
+def delayed_30_mins(flights):
+    delayed_30 = 0
+    for i in range(len(flights)):
+        if 15 < flights[i] <= 30:
+            delayed_30 += 1
+    return delayed_30
+#percent of flights that left within 30 minutes after time
+def percent_delayed_30(flights):
+    percent_delay30 = 0
+    if flights != 0:
+        percent_delay30 = round((delayed_30_mins(flights) / len(flights)) * 100)
+    return percent_delay30
+
+#flights that left within 60 minutes after time
+def delayed_60_mins(flights):
+    delayed_60 = 0
+    for i in range(len(flights)):
+        if 30 < flights[i] <= 60:
+            delayed_60 += 1
+    return delayed_60
+#percent of flights that left within 60 minutes after time
+def percent_delayed_60(flights):
+    percent_delay60 = 0
+    if len(flights) != 0:
+        percent_delay60 = round((delayed_60_mins(flights) / len(flights)) * 100)
+    return percent_delay60
+
+#flights that left more than 60 minutes after time
+def delayed_over_60(flights):
+    over_60 = 0
+    for i in range(len(flights)):
+        if flights[i] > 60:
+            over_60 += 1
+    return over_60
+
+#percent of flights that left more than 60 minutes after time
+def percent_over_60(flights):
+    per_over_60 = 0
+    if len(flights) != 0:
+        per_over_60 = round((delayed_over_60(flights) / len(flights)) * 100)
+    return per_over_60
+
+#finds average delay of departure
+def avg_delay(flights):
+    total_min_delay = 0
+    num_flight_delay = 0
+    for time_diff in flights:
+        if time_diff > 15:
+            total_min_delay += time_diff
+            num_flight_delay += 1
+    if total_min_delay == 0 or num_flight_delay == 0:
+        avg = 0
+    else:
+        avg = int(total_min_delay / num_flight_delay)
+    return avg
+
+#prints sequence of on time / delayed departures in order
+def sequence(flights):
+    print('=== On-time/delayed sequence')
+    for number in range(len(flights)):
+        if flights[number] <= 15:
+            print('O', end='')
+        else:
+            print('L', end='')
+        if (number + 1) % 5 == 0:
+                print('\n')
+    print()
+    print('==============================')
+
+def calculate_diffs(flight_times):
+    flight_diffs = []
+    for i in range(0, len(flight_times), 2):
+        flight_diffs.append(flight_times[i+1] - flight_times[i])
+
+#prints overview of all departures
+def overview(stats):
+    print('=== Overview')
+    print('Total departures: {}'.format(stats['total_departures']))
+    print('On-time departures: {}%'.format(stats['%on_time_departures']))
+    print('Average delay of departure (minutes): {}'.format(stats['avg_delay']))
+    print('==============================')
+
+#prints results of on time / delayed departures
+def overview_analysis(stats):
+    print('=== On-time/delayed departures')
+    print('Early departures: {} ({}%)'.format(stats['early_departures'], stats['%early_departures']))
+    print('On-time departures: {} ({}%)'. format(stats['on_time_departures_not_early'], stats['%on_time_departures_not_early']))
+    print('Delayed departures (30 minutes): {} ({}%)'. format(stats['delayed_30_departures'], stats['%delayed_30_departures']))
+    print('Delayed departures (one hour): {} ({}%)'. format(stats['delayed_upto_60_departures'], stats['%delayed_upto_60_departures']))
+    print('Delayed departures (more than an hour): {} ({}%)'. format(stats['delayed_over_60_departures'], stats['%delayed_over_60_departures']))
+    print('==============================')
+
+def calculate_stats(flight_diffs):
+    stats = {'total_departures': len(flight_diffs),
+             'early_departures': left_early(flight_diffs),
+             '%early_departures': percent_early(flight_diffs),
+             'on_time_departures': left_on_time(flight_diffs),
+             '%on_time_departures': percent_on_time(flight_diffs),
+             'on_time_departures_not_early': left_on_time_not_early(flight_diffs),
+             '%on_time_departures_not_early': percent_on_time_not_early(flight_diffs),
+             'avg_delay': avg_delay(flight_diffs),
+             'delayed_30_departures': delayed_30_mins(flight_diffs),
+             '%delayed_30_departures': percent_delayed_30(flight_diffs),
+             'delayed_upto_60_departures': delayed_60_mins(flight_diffs),
+             '%delayed_upto_60_departures': percent_delayed_60(flight_diffs),
+             'delayed_over_60_departures': delayed_over_60(flight_diffs),
+             '%delayed_over_60_departures': percent_over_60(flight_diffs)}
+
+    return stats
+    
+def main():
+    flights = get_inputs()
+    if len(flights) != 0:
+        stats = calculate_stats(flights)
+        overview(stats)
+        overview_analysis(stats)
+        sequence(flights)
+    else:
+        print('')
+
+if __name__ == '__main__':
+    main()
