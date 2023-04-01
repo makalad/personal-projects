@@ -1,0 +1,89 @@
+class Person:
+    def __init__(self, name = "N/A", birth_date = "N/A", death_date = ""):
+        self.__name = name
+        self.__birth_date = birth_date
+        self.__death_date = death_date
+        self.__parent = None
+        self.__children = []
+
+#TODO handle age correctly
+    def __str__(self):
+        return self.__name + " *" + self.__birth_date
+
+    def add_child(self, person):
+        self.__children.append(person)
+
+    def delete_child(self, name):
+        for index, child in enumerate(self.__children):
+            if child.__name == name:
+                self.__children.pop(index)
+#TODO fix age
+    def get_age(self):
+        pass
+
+    def get_birth_date(self):
+        return self.__birth_date
+
+    def get_child(self, name):
+        for child in self.__children:
+            if child.__name == name:
+                return child
+
+    def get_children(self):
+        return self.__children
+
+    def get_death_date(self):
+        return self.__death_date
+
+    def get_name(self):
+        return self.__name
+
+    def get_parent(self):
+        return self.__parent
+
+    def set_birth_date(self, birth_date):
+        self.__birth_date = birth_date
+
+    def set_death_date(self, death_date):
+        self.__death_date = death_date
+
+    def set_name(self, name):
+        self.__name = name
+
+    def set_parent(self, parent):
+        self.__parent = parent
+
+    def __eq__(self, person):
+        birth_date_parts = self.__birth_date.split("-")
+        death_date_parts = self.__death_date.split("-")
+        person_birth_date_parts = person.get_birth_date().split("-")
+        person_death_date_parts = person.get_death_date().split("-")
+        return isinstance(person, Person) and (self.__name == person.get_name()) \
+               and (birth_date_parts[0] == person_birth_date_parts[0]) \
+               and (birth_date_parts[1] == person_birth_date_parts[1]) \
+               and len(death_date_parts) >= 2 and len(person_death_date_parts) >= 2 \
+               and (death_date_parts[0] == person_death_date_parts[0]) \
+               and (death_date_parts[1] == person_death_date_parts[1])
+
+def main():
+    lena = Person ("Lena", "1972-02-23")
+    becky = Person("Becky", "1972-02-23", "2020-07-22")
+    ken = Person("Ken", "1972-02-23", "2020-07-19")
+    izzy = Person ("Izzy", "2010-09-13")
+    izzy.__parent = lena
+    lena.add_child(izzy)
+    lena.delete_child('Izzy')
+    izzy.__parent = lena
+    lena.add_child(izzy)
+    print ("Lena's birthday is: " + lena.get_birth_date())
+    print ("Izzy's birthday is: " + izzy.get_birth_date())
+    print (lena.get_child("Izzy").__str__())
+    print ("Lena's children: " + str(lena.get_children()))
+    print (becky.__eq__(ken))
+
+
+if __name__ == '__main__':
+    main()
+
+    """def __str__(self):
+        return "Person birth_date=" + self.birth_date + "death-date = " + self.birth_date + " Parent = " + self.parent + " Children = " + str (self.children)"""
