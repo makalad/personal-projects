@@ -1,0 +1,72 @@
+import random
+
+def print_results(num_dice, num_rolls, num_matched):
+    print('=== Results')
+    print('When {} dice were rolled {} times,the number of rolls '.format(num_dice, num_rolls), end='')
+    print('where all numbers matched was {} out of {} rolls.'.format(num_matched, num_rolls))
+    print('===========')
+
+
+def get_num_dice():
+    num_dice = int(input('Enter number of dice: '))
+    while not 2 <= num_dice <= 5:
+        num_dice = int(input('Only two to five dice, try again: '))
+    return num_dice
+
+def get_num_rolls():
+    num_rolls = int(input('Enter number of rolls: '))
+    while num_rolls <= 0:
+        num_rolls = int(input('Not a positive number, try again: '))
+    return num_rolls
+
+def get_matches(rolled_dice):
+    num_matches = 0
+    for roll in rolled_dice:
+        total_rolls = len(roll)
+        index = 0
+        # get the first item and then see if all the others will match
+        dice_number_to_find = roll[index]
+        index = index +1
+        while index < total_rolls:
+            if roll[index] != dice_number_to_find:
+                break
+            index = index + 1
+
+        # see if we made it to total_rolls
+        if index == total_rolls:
+            num_matches = num_matches + 1
+
+
+    return num_matches
+
+def get_rolled_dice(num_dice, num_rolls):
+    rolled_dice = []
+    if num_rolls > 0:
+        for roll in range(0, num_rolls):
+            rolls = []
+            for dice_num in range(0, num_dice):
+                rolls.append(random.randint(1, 6))
+            rolled_dice.append(rolls)
+    return rolled_dice
+
+
+def run_experiment(num_dice, num_rolls):
+    rolled_dice = get_rolled_dice(num_dice, num_rolls)
+    num_matches = get_matches(rolled_dice)
+    print_results(num_dice, num_rolls, num_matches)
+
+def main():
+    seed = int(input('Enter a seed:'))
+    random.seed(seed)
+
+    while (True):
+        num_dice = get_num_dice()
+        num_rolls = get_num_rolls()
+        run_experiment(num_dice,num_rolls)
+        run_again = input('Run experiment again?: ')
+        if run_again != 'y':
+            break
+
+
+if __name__ == '__main__':
+    main()
